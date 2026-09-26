@@ -11,7 +11,7 @@ services:
     runtime: docker
     plan: free
     region: singapore
-    rootDir: assignment-2-ecommerce
+    rootDir: assessment-2
     dockerfilePath: ./Dockerfile
     healthCheckPath: /api/health
     envVars:

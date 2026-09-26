@@ -7,7 +7,7 @@ React, TypeScript, Tailwind and shadcn/ui storefront backed by FastAPI, PostgreS
 Prerequisites: Python 3.11+, Node 20.19+ (or 22.12+), PostgreSQL 15+.
 
 1. Create a PostgreSQL database named `novastore`. Copy `backend/.env.example` to `backend/.env`; set a fresh random `SECRET_KEY` and `DATABASE_URL`.
-2. In `assignment-2-ecommerce/backend`:
+2. In `assessment-2/backend`:
 
    ```powershell
    py -3.13 -m venv venv
@@ -17,7 +17,7 @@ Prerequisites: Python 3.11+, Node 20.19+ (or 22.12+), PostgreSQL 15+.
    ```
 
    FastAPI docs: http://localhost:8000/docs. At startup the API creates the schema, applies its additive order-field migration, and seeds only the product catalog.
-3. In another terminal, `cd assignment-2-ecommerce/frontend`, then run `npm ci` and `npm run dev`. Open http://localhost:5173.
+3. In another terminal, `cd assessment-2/frontend`, then run `npm ci` and `npm run dev`. Open http://localhost:5173.
 
 Catalog browsing and basic database-backed product help work without provider credentials. Google login and Stripe checkout require real provider test credentials. Without an OpenAI key, support uses labelled basic database-backed routing.
 
@@ -29,7 +29,7 @@ Catalog browsing and basic database-backed product help work without provider cr
 
 ## Free Render demo
 
-1. Push this repository to GitHub. In Render, choose **New → Blueprint** and select the repository. Set the Blueprint file path to `assignment-2-ecommerce/render.yaml`. Render creates a PostgreSQL database and Docker web service in Singapore.
+1. Push this repository to GitHub. In Render, choose **New → Blueprint** and select the repository. Set the Blueprint file path to `assessment-2/render.yaml`. Render creates a PostgreSQL database and Docker web service in Singapore.
 2. In the service settings, enter your Google client ID, `ADMIN_EMAILS`, Stripe test key and webhook secret. Render provides the service's HTTPS URL to the app automatically. Add `OPENAI_API_KEY` if you want LLM support. Never commit `.env` or provider secrets.
 3. Add the Render HTTPS origin to the Google OAuth client. Register `https://YOUR-HOST.onrender.com/api/webhooks/stripe` in Stripe test-mode webhooks and save the generated signing secret to Render.
 
