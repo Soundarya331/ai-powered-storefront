@@ -27,7 +27,14 @@ export const App: React.FC = () => {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
 
   const { token, user, isLoading } = useAuth();
-  const { clearCart } = useCart();
+  const { clearCart, items, addToCart, setIsCartOpen } = useCart();
+  const [loginRequested, setLoginRequested] = useState(false);
+  const handleBuy = (product: Product) => {
+    if (!items.some(item => item.product.id === product.id) && !addToCart(product)) return;
+    setSelectedProduct(null);
+    setLoginRequested(!user);
+    setIsCartOpen(true);
+  };
   const [checkoutMessage, setCheckoutMessage] = useState('');
   const [confirmedOrder, setConfirmedOrder] = useState<Order | null>(null);
 
@@ -133,7 +140,7 @@ export const App: React.FC = () => {
 
           {/* Search & Stock Filter */}
           <div className="flex flex-wrap items-center gap-3">
-            <form onSubmit={handleSearchSubmit} className="relative flex-1 sm:w-72">
+            <form onSubmit={handleSearchSubmit} className="relative min-w-0 basis-full sm:basis-auto flex-1 sm:w-72">
               <input
                 type="text"
                 placeholder="Search products or specs..."
@@ -187,6 +194,7 @@ export const App: React.FC = () => {
                 key={product.id}
                 product={product}
                 onQuickView={setSelectedProduct}
+                onBuy={handleBuy}
               />
             ))}
           </div>
@@ -205,9 +213,9 @@ export const App: React.FC = () => {
       </footer>
 
       {/* Modals & Drawers */}
-      <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
+      <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} onBuy={handleBuy} />
       
-      <CartDrawer />
+      <CartDrawer loginRequested={loginRequested} onDismissLogin={() => setLoginRequested(false)} />
 
       <CheckoutSuccessModal
         order={confirmedOrder}

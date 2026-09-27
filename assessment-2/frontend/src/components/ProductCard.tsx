@@ -6,15 +6,16 @@ import { useCart } from '../context/CartContext';
 interface ProductCardProps {
   product: Product;
   onQuickView: (product: Product) => void;
+  onBuy: (product: Product) => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, onBuy }) => {
   const { addToCart, updateQuantity, removeFromCart, items } = useCart();
   const [justAdded, setJustAdded] = useState(false);
 
   const cartItem = items.find((i) => i.product.id === product.id);
   const currentInCart = cartItem?.quantity || 0;
-  const remainingStock = product.stock_quantity - currentInCart;
+  const remainingStock = Math.max(0, Math.min(100, product.stock_quantity) - currentInCart);
   const isOutOfStock = product.stock_quantity === 0;
   const isCartFullForThis = remainingStock <= 0;
 
@@ -59,7 +60,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
         >
           {isOutOfStock
             ? 'Out of Stock'
-            : remainingStock <= 5
+            : remainingStock === 0 ? 'All available added' : remainingStock <= 5
             ? `Only ${remainingStock} left!`
             : 'In Stock'}
         </span>
@@ -87,7 +88,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
         </p>
 
         {/* Price & Action Button */}
-        <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+        <div className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
           <div>
             <span className="text-xs text-slate-400 font-medium">Price</span>
             <p className="text-lg font-bold text-slate-900">
@@ -109,7 +110,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
                     updateQuantity(product.id, currentInCart - 1);
                   }
                 }}
-                className="p-2 rounded-l-xl text-slate-600 hover:bg-rose-100 hover:text-rose-600 transition-colors active:scale-90"
+                className="min-h-11 min-w-9 p-2 rounded-l-xl text-slate-600 hover:bg-rose-100 hover:text-rose-600 transition-colors active:scale-90"
                 aria-label="Decrease quantity"
               >
                 <Minus className="w-3.5 h-3.5" />
@@ -123,7 +124,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
                   if (!isCartFullForThis) addToCart(product, 1);
                 }}
                 disabled={isCartFullForThis}
-                className={`p-2 rounded-r-xl transition-colors active:scale-90 ${
+                className={`min-h-11 min-w-9 p-2 rounded-r-xl transition-colors active:scale-90 ${
                   isCartFullForThis
                     ? 'text-slate-300 cursor-not-allowed'
                     : 'text-slate-600 hover:bg-emerald-100 hover:text-emerald-600'
@@ -159,6 +160,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
             </button>
           )}
         </div>
+        <p aria-live="polite" className="mt-3 text-xs text-slate-500">{currentInCart} in cart / {remainingStock} available to add</p>
+        <button type="button" disabled={isOutOfStock} onClick={e => { e.stopPropagation(); onBuy(product); }}
+          className="mt-3 min-h-11 w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-40">
+          Buy now
+        </button>
       </div>
     </div>
   );

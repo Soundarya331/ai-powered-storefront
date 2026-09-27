@@ -87,7 +87,7 @@ export const AiChatWidget: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-40">
       {/* Floating Toggle Button */}
       {!isOpen && (
         <button
@@ -104,7 +104,7 @@ export const AiChatWidget: React.FC = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="bg-white rounded-3xl shadow-2xl border border-slate-200/80 w-[360px] sm:w-[400px] h-[540px] flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-300">
+        <div className="bg-white rounded-3xl shadow-2xl border border-slate-200/80 w-[calc(100vw-1.5rem)] sm:w-[400px] h-[540px] max-h-[calc(100dvh-1.5rem)] flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-300">
           {/* Header */}
           <div className="p-4 bg-gradient-to-r from-slate-900 to-slate-800 text-white flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -124,6 +124,7 @@ export const AiChatWidget: React.FC = () => {
 
             <button
               onClick={() => setIsOpen(false)}
+              aria-label="Close support"
               className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-xl transition-colors"
             >
               <X className="w-4 h-4" />
@@ -131,7 +132,7 @@ export const AiChatWidget: React.FC = () => {
           </div>
 
           {/* Messages Feed */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3.5 bg-slate-50/50 custom-scrollbar">
+          <div className="min-h-0 flex-1 overflow-y-auto p-4 space-y-3.5 bg-slate-50/50 custom-scrollbar">
             {messages.map((msg) => {
               const isUser = msg.role === 'user';
               return (
@@ -140,7 +141,7 @@ export const AiChatWidget: React.FC = () => {
                   className={`flex flex-col ${isUser ? 'items-end' : 'items-start'}`}
                 >
                   <div
-                    className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed shadow-sm ${
+                    className={`max-w-[85%] break-words rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed shadow-sm ${
                       isUser
                         ? 'bg-slate-900 text-white rounded-br-none'
                         : 'bg-white border border-slate-200/80 text-slate-800 rounded-bl-none whitespace-pre-line'
@@ -205,7 +206,7 @@ export const AiChatWidget: React.FC = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               maxLength={4000} placeholder="Ask about products, prices, or orders..."
-              className="flex-1 px-3.5 py-2 text-xs bg-slate-100 border border-transparent rounded-xl focus:bg-white focus:border-emerald-500 focus:outline-none transition-all"
+              className="min-w-0 flex-1 px-3.5 py-2 text-base sm:text-xs bg-slate-100 border border-transparent rounded-xl focus:bg-white focus:border-emerald-500 focus:outline-none transition-all"
             />
             <button
               type="submit"

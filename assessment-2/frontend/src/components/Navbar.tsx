@@ -26,7 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-4">
+        <div className="flex flex-wrap items-center justify-between min-h-16 gap-3 py-3">
           {/* Logo */}
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => onSelectCategory('All')}>
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
@@ -36,14 +36,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
                 NovaStore
               </span>
-              <span className="hidden sm:inline-block ml-2 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-emerald-100 text-emerald-800 rounded-full">
+              <span className="hidden xl:inline-block ml-2 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-emerald-100 text-emerald-800 rounded-full">
                 AI + Stripe
               </span>
             </div>
           </div>
 
           {/* Category Chips (Desktop) */}
-          <nav className="hidden md:flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl border border-slate-200/60">
+          <nav className="hidden xl:flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl border border-slate-200/60">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
@@ -60,7 +60,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           {/* Right Action Icons & Auth */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             {/* Orders button */}
             {user && (
               <button
@@ -81,7 +81,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 title="Admin Management Panel"
               >
                 <Shield className="w-4 h-4 text-purple-600" />
-                <span className="font-semibold">Admin Panel</span>
+                <span className="hidden sm:inline font-semibold">Admin Panel</span>
               </button>
             )}
 
@@ -156,7 +156,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Mobile Category Chips */}
-        <div className="flex md:hidden overflow-x-auto pb-2 gap-1.5 no-scrollbar">
+        <div className="flex xl:hidden overflow-x-auto pb-2 gap-1.5 no-scrollbar">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}

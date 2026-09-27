@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Product, CartItem } from '../types';
 
 interface CartContextType {
@@ -25,63 +25,45 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   });
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const itemsRef = useRef(items);
+  const commitItems = (next: CartItem[]) => {
+    itemsRef.current = next;
+    setItems(next);
+  };
 
   useEffect(() => {
-    localStorage.setItem('novastore_cart', JSON.stringify(items));
+    try { localStorage.setItem('novastore_cart', JSON.stringify(items)); } catch { /* Storage may be disabled. */ }
   }, [items]);
 
   const addToCart = (product: Product, quantity: number = 1): boolean => {
-    if (product.stock_quantity <= 0) return false;
-
-    let success = true;
-    setItems((prev) => {
-      const existing = prev.find((i) => i.product.id === product.id);
-      if (existing) {
-        const nextQty = existing.quantity + quantity;
-        if (nextQty > product.stock_quantity) {
-          success = false;
-          return prev;
-        }
-        return prev.map((i) =>
-          i.product.id === product.id ? { ...i, quantity: nextQty } : i
-        );
-      }
-      if (quantity > product.stock_quantity) {
-        success = false;
-        return prev;
-      }
-      return [...prev, { product, quantity }];
-    });
-    return success;
+    const previous = itemsRef.current;
+    const existing = previous.find(i => i.product.id === product.id);
+    const nextQuantity = (existing?.quantity || 0) + quantity;
+    if (!Number.isInteger(quantity) || quantity <= 0 || nextQuantity > Math.min(100, product.stock_quantity)) return false;
+    commitItems(existing
+      ? previous.map(i => i.product.id === product.id ? { product, quantity: nextQuantity } : i)
+      : [...previous, { product, quantity }]);
+    return true;
   };
 
   const removeFromCart = (productId: number) => {
-    setItems((prev) => prev.filter((i) => i.product.id !== productId));
+    commitItems(itemsRef.current.filter((i) => i.product.id !== productId));
   };
 
   const updateQuantity = (productId: number, quantity: number): boolean => {
-    if (quantity <= 0) {
+    if (!Number.isInteger(quantity) || quantity < 0) return false;
+    if (quantity === 0) {
       removeFromCart(productId);
       return true;
     }
 
-    let success = true;
-    setItems((prev) =>
-      prev.map((i) => {
-        if (i.product.id === productId) {
-          if (quantity > i.product.stock_quantity) {
-            success = false;
-            return i;
-          }
-          return { ...i, quantity };
-        }
-        return i;
-      })
-    );
-    return success;
+    const item = itemsRef.current.find(i => i.product.id === productId);
+    if (!item || quantity > Math.min(100, item.product.stock_quantity)) return false;
+    commitItems(itemsRef.current.map(i => i.product.id === productId ? { ...i, quantity } : i));
+    return true;
   };
 
-  const clearCart = () => setItems([]);
+  const clearCart = () => commitItems([]);
 
   const cartTotalCents = items.reduce(
     (sum, item) => sum + item.product.price_cents * item.quantity,
