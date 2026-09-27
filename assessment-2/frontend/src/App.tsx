@@ -96,7 +96,7 @@ export const App: React.FC = () => {
 
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 max-w-3xl mx-auto leading-tight">
             Everyday technology with{' '}
-            <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-600 bg-clip-text text-transparent text-shimmer">
               help when you need it
             </span>
           </h1>
@@ -194,12 +194,13 @@ export const App: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 py-8 text-center text-xs text-slate-500">
+      <footer className="bg-gradient-to-b from-white to-slate-50 border-t border-slate-200 py-10 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 space-y-2">
-          <p className="font-semibold text-slate-700">NovaStore • AI Full Stack Developer Assessment</p>
+          <p className="font-semibold text-slate-700">NovaStore • AI-Powered Storefront</p>
           <p className="text-[11px] text-slate-400">
-            UI &rarr; API &rarr; Database &rarr; Authentication &rarr; Business Logic &rarr; AI &rarr; Integration
+            React · FastAPI · PostgreSQL · Google Auth · Stripe · LangChain
           </p>
+          <p className="text-[10px] text-slate-300 mt-2">© 2026 NovaStore. Built with ❤️</p>
         </div>
       </footer>
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Check, Eye } from 'lucide-react';
+import { ShoppingCart, Check, Eye, Plus, Minus } from 'lucide-react';
 import { Product } from '../types';
 import { useCart } from '../context/CartContext';
 
@@ -9,7 +9,7 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
-  const { addToCart, items } = useCart();
+  const { addToCart, updateQuantity, removeFromCart, items } = useCart();
   const [justAdded, setJustAdded] = useState(false);
 
   const cartItem = items.find((i) => i.product.id === product.id);
@@ -95,29 +95,69 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
             </p>
           </div>
 
-          <button
-            onClick={handleAdd}
-            disabled={isOutOfStock || isCartFullForThis}
-            className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm ${
-              justAdded
-                ? 'bg-emerald-600 text-white'
-                : isOutOfStock || isCartFullForThis
-                ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
-                : 'bg-slate-900 hover:bg-emerald-600 text-white active:scale-95'
-            }`}
-          >
-            {justAdded ? (
-              <>
-                <Check className="w-3.5 h-3.5" />
-                Added
-              </>
-            ) : (
-              <>
-                <ShoppingCart className="w-3.5 h-3.5" />
-                {isOutOfStock ? 'Sold Out' : isCartFullForThis ? 'Max Added' : 'Add'}
-              </>
-            )}
-          </button>
+          {currentInCart > 0 ? (
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center gap-0.5 bg-slate-100 rounded-xl border border-slate-200/80 shadow-sm"
+            >
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (currentInCart <= 1) {
+                    removeFromCart(product.id);
+                  } else {
+                    updateQuantity(product.id, currentInCart - 1);
+                  }
+                }}
+                className="p-2 rounded-l-xl text-slate-600 hover:bg-rose-100 hover:text-rose-600 transition-colors active:scale-90"
+                aria-label="Decrease quantity"
+              >
+                <Minus className="w-3.5 h-3.5" />
+              </button>
+              <span className="min-w-[28px] text-center text-xs font-bold text-slate-800 tabular-nums">
+                {currentInCart}
+              </span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!isCartFullForThis) addToCart(product, 1);
+                }}
+                disabled={isCartFullForThis}
+                className={`p-2 rounded-r-xl transition-colors active:scale-90 ${
+                  isCartFullForThis
+                    ? 'text-slate-300 cursor-not-allowed'
+                    : 'text-slate-600 hover:bg-emerald-100 hover:text-emerald-600'
+                }`}
+                aria-label="Increase quantity"
+              >
+                <Plus className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={handleAdd}
+              disabled={isOutOfStock || isCartFullForThis}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm ${
+                justAdded
+                  ? 'bg-emerald-600 text-white'
+                  : isOutOfStock || isCartFullForThis
+                  ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
+                  : 'bg-slate-900 hover:bg-emerald-600 text-white active:scale-95'
+              }`}
+            >
+              {justAdded ? (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  Added
+                </>
+              ) : (
+                <>
+                  <ShoppingCart className="w-3.5 h-3.5" />
+                  {isOutOfStock ? 'Sold Out' : isCartFullForThis ? 'Max Added' : 'Add'}
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
     </div>

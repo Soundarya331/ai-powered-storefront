@@ -289,6 +289,19 @@ def test_llm_tool_messages_and_grounding(setup, monkeypatch):
     assert len([msg for msg in messages if isinstance(msg, ToolMessage)]) == 2
 
 
+def test_ai_failure_logs_diagnostics_without_secrets(setup, monkeypatch, caplog):
+    client, _, _ = setup
+    monkeypatch.setattr(settings, 'OPENAI_API_KEY', 'test-only')
+    error = RuntimeError('Sensitive provider message containing sk-secret-customer-data')
+    error.status_code = 429
+    error.code = 'insufficient_quota'
+    monkeypatch.setattr(support_agent, 'ChatOpenAI', Mock(side_effect=error))
+    response = client.post('/api/ai/chat', json={'message': 'What products are available?'})
+    assert response.status_code == 503
+    assert 'status=429 code=insufficient_quota' in caplog.text
+    assert 'sk-secret-customer-data' not in caplog.text + response.text
+
+
 def test_concurrent_checkout_cannot_oversell(setup):
     if not os.getenv('TEST_DATABASE_URL'):
         pytest.skip('Concurrency requires PostgreSQL')

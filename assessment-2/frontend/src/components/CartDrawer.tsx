@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { X, Trash2, Plus, Minus, CreditCard, AlertCircle, ShoppingBag, ArrowRight } from 'lucide-react';
+import { X, Trash2, Plus, Minus, CreditCard, AlertCircle, ShoppingBag, ArrowRight, LogIn } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
+import { GoogleSignIn } from './GoogleSignIn';
 
 export const CartDrawer: React.FC = () => {
   const { isCartOpen, setIsCartOpen, items, updateQuantity, removeFromCart, cartTotalCents, clearCart } =
@@ -10,6 +11,7 @@ export const CartDrawer: React.FC = () => {
   const { user, token } = useAuth();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   if (!isCartOpen) return null;
 
@@ -18,7 +20,7 @@ export const CartDrawer: React.FC = () => {
 
     // Require authentication
     if (!token || !user) {
-      setErrorMsg('Please sign in with Google to continue checkout.');
+      setShowLoginPrompt(true);
       return;
     }
 
@@ -46,7 +48,7 @@ export const CartDrawer: React.FC = () => {
       <div className="absolute inset-0" onClick={() => setIsCartOpen(false)} />
 
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col border-l border-slate-200">
+        <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col border-l border-slate-200 relative">
           {/* Header */}
           <div className="p-5 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -76,7 +78,7 @@ export const CartDrawer: React.FC = () => {
           )}
 
           {/* Item List */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
             {items.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-6 text-slate-400">
                 <ShoppingBag className="w-12 h-12 mb-3 stroke-[1.5] text-slate-300" />
@@ -194,6 +196,28 @@ export const CartDrawer: React.FC = () => {
                   Clear Cart
                 </button>
                 <span>Encrypted 256-bit Stripe Test Mode</span>
+              </div>
+            </div>
+          )}
+
+          {/* Login Prompt Overlay */}
+          {showLoginPrompt && (
+            <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-10 flex items-center justify-center p-6">
+              <div className="text-center space-y-4 max-w-xs">
+                <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                  <LogIn className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900">Sign in to Continue</h3>
+                <p className="text-sm text-slate-500">Sign in with your Google account to complete your purchase securely via Stripe.</p>
+                <div className="flex justify-center">
+                  <GoogleSignIn />
+                </div>
+                <button
+                  onClick={() => setShowLoginPrompt(false)}
+                  className="text-xs text-slate-400 hover:text-slate-600 underline transition-colors"
+                >
+                  Continue Shopping
+                </button>
               </div>
             </div>
           )}

@@ -91,8 +91,19 @@ def run_support_agent(message, db, conversation_history, current_user_email=None
                     outputs.append(result)
                     messages.append(ToolMessage(content=result, tool_call_id=call['id']))
             return {'response': '\n\n'.join(outputs), 'tools_called': called, 'mode': 'llm'}
-        except Exception:
-            logger.warning('AI provider request failed', exc_info=False)
+        except Exception as error:
+            # Log diagnostic metadata only: provider messages can contain credentials
+            # or customer content. Keep those out of logs and browser responses.
+            known_codes = {'invalid_api_key', 'insufficient_quota', 'rate_limit_exceeded',
+                           'model_not_found', 'billing_hard_limit_reached',
+                           'organization_usage_limit_exceeded', 'permission_denied'}
+            code = getattr(error, 'code', None)
+            status = getattr(error, 'status_code', None)
+            logger.warning(
+                'AI request failed: type=%s status=%s code=%s',
+                type(error).__name__, status if isinstance(status, int) else 'unknown',
+                code if isinstance(code, str) and code in known_codes else 'unknown',
+            )
             raise HTTPException(503, 'AI support is temporarily unavailable. Please try again.')
 
     # Explicit basic mode works without an API account; the UI labels it accurately.
