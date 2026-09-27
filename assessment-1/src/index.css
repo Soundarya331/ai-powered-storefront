@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes paperFlipNext {
+  0% {
+    transform: rotateY(0deg);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  50% {
+    transform: rotateY(-90deg);
+    box-shadow: -20px 0 30px rgba(0, 0, 0, 0.3);
+  }
+
+  100% {
+    transform: rotateY(-180deg);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@keyframes paperFlipPrev {
+  0% {
+    transform: rotateY(0deg);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  50% {
+    transform: rotateY(90deg);
+    box-shadow: 20px 0 30px rgba(0, 0, 0, 0.3);
+  }
+
+  100% {
+    transform: rotateY(180deg);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.animate-paper-flip-next {
+  animation: paperFlipNext 0.6s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
+}
+
+.animate-paper-flip-prev {
+  animation: paperFlipPrev 0.6s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
+}
+
+
+@keyframes paperFlipNext {
+  0% {
+    transform: rotateY(0deg);
+  }
+
+  100% {
+    transform: rotateY(-180deg);
+  }
+}
+
+@keyframes paperFlipPrev {
+  0% {
+    transform: rotateY(0deg);
+  }
+
+  100% {
+    transform: rotateY(180deg);
+  }
+}
+
+.animate-paper-flip-next {
+  animation: paperFlipNext 0.6s ease-in-out forwards;
+}
+
+.animate-paper-flip-prev {
+  animation: paperFlipPrev 0.6s ease-in-out forwards;
+}
